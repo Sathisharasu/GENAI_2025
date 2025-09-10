@@ -1,0 +1,53 @@
+Homework Assignment 2:
+
+Integrate the prompt to your API (using postman) and confirm the response (json)
+
+Objective: You can integrate prompt + LLM API
+
+Request:
+*********************
+{
+  "model": "meta-llama/llama-4-maverick-17b-128e-instruct",
+  "messages": [
+    {
+      "role": "user",
+      "content": "- Context:\n  You are an expert AI assistant that converts Selenium Java code into Playwright TypeScript code.\n  Ensure the output follows modern Playwright best practices (async/await, auto-waiting, expect assertions).\n  Always replace Selenium locators and actions with Playwright equivalents, using the latest working locators.\n\n- Task:\n  Convert the following Selenium Java `CreateLead` example into Playwright TypeScript.\n  Do not use Page Object Model (POM). Keep the code inline inside a test block.\n  The output should be ready-to-run using Playwright Test runner.\n\n- Input Selenium Code:\n```java\npackage week2.day1;\n\nimport org.openqa.selenium.By;\nimport org.openqa.selenium.WebElement;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.openqa.selenium.support.ui.Select;\n\nimport io.github.bonigarcia.wdm.WebDriverManager;\n\npublic class CreateLead {\n    public static void main(String[] args) {\n        WebDriverManager.chromedriver().setup();\n        ChromeDriver driver = new ChromeDriver();\n        driver.get(\"http://leaftaps.com/opentaps\");\n        driver.manage().window().maximize();\n\n        driver.findElement(By.id(\"username\")).sendKeys(\"DemoSalesManager\");\n        driver.findElement(By.id(\"password\")).sendKeys(\"crmsfa\");\n        driver.findElement(By.className(\"decorativeSubmit\")).click();\n\n        String title = driver.getTitle();\n        System.out.println(title);\n\n        driver.findElement(By.linkText(\"CRM/SFA\")).click();\n        driver.findElement(By.linkText(\"Create Lead\")).click();\n\n        driver.findElement(By.id(\"createLeadForm_companyName\")).sendKeys(\"TestLeaf\");\n        driver.findElement(By.id(\"createLeadForm_firstName\")).sendKeys(\"Babu\");\n        driver.findElement(By.id(\"createLeadForm_lastName\")).sendKeys(\"Manickam\");\n\n        WebElement source = driver.findElement(By.id(\"createLeadForm_dataSourceId\"));\n        Select dd1 = new Select(source);\n        dd1.selectByVisibleText(\"Employee\");\n\n        WebElement marketing = driver.findElement(By.id(\"createLeadForm_marketingCampaignId\"));\n        Select dd2 = new Select(marketing);\n        dd2.selectByValue(\"9001\");\n\n        driver.findElement(By.name(\"submitButton\")).click();\n        title = driver.getTitle();\n        System.out.println(title);\n    }\n}\n```\n\n- Additional Requirement:\n  Make sure the Playwright code uses **correct and up-to-date locators** instead of relying on brittle ones."
+    }
+  ]
+}
+
+********************************
+Response:
+
+{
+    "id": "chatcmpl-8332dd5a-97ea-42f8-9f72-5c91199043b4",
+    "object": "chat.completion",
+    "created": 1757487816,
+    "model": "meta-llama/llama-4-maverick-17b-128e-instruct",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "### Converted Playwright TypeScript Code\n\nHere's the equivalent Playwright TypeScript code for the given Selenium Java `CreateLead` example:\n\n```typescript\nimport { test, expect } from '@playwright/test';\n\ntest('Create Lead', async ({ page }) => {\n  await page.goto('http://leaftaps.com/opentaps');\n  await page.locator('#username').fill('DemoSalesManager');\n  await page.locator('#password').fill('crmsfa');\n  await page.locator('input.decorativeSubmit').click();\n\n  const title = await page.title();\n  console.log(title);\n\n  await page.locator('text=\"CRM/SFA\"').click();\n  await page.locator('text=\"Create Lead\"').click();\n\n  await page.locator('#createLeadForm_companyName').fill('TestLeaf');\n  await page.locator('#createLeadForm_firstName').fill('Babu');\n  await page.locator('#createLeadForm_lastName').fill('Manickam');\n\n  await page.locator('#createLeadForm_dataSourceId').selectOption({ label: 'Employee' });\n  await page.locator('#createLeadForm_marketingCampaignId').selectOption({ value: '9001' });\n\n  await page.locator('input[name=\"submitButton\"]').click();\n\n  const newTitle = await page.title();\n  console.log(newTitle);\n\n  // Additional assertions to verify the test\n  await expect(page.locator('#viewLead_companyName_sp')).toContainText('TestLeaf');\n  await expect(page.locator('#viewLead_firstName_sp')).toContainText('Babu');\n  await expect(page.locator('#viewLead_lastName_sp')).toContainText('Manickam');\n});\n```\n\n### Key Changes and Improvements:\n\n1. Replaced `ChromeDriver` with Playwright's `page` object.\n2. Used `async/await` for handling asynchronous operations.\n3. Replaced `driver.findElement` with `page.locator` and used more robust locators.\n4. Used `fill` method instead of `sendKeys` for filling form fields.\n5. Replaced `Select` class with `selectOption` method provided by Playwright.\n6. Used `expect` assertions for verifying the test results.\n7. Added additional assertions to ensure the test is verifying the expected outcome.\n\n### Notes:\n\n* This code uses the `@playwright/test` runner, which is the recommended way to run Playwright tests.\n* The test is written in a straightforward, inline style, without using the Page Object Model (POM).\n* The locators used are more robust and less prone to breaking due to minor changes in the application."
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "queue_time": 0.06466463,
+        "prompt_tokens": 488,
+        "prompt_time": 0.01794443,
+        "completion_tokens": 544,
+        "completion_time": 0.809481905,
+        "total_tokens": 1032,
+        "total_time": 0.827426335
+    },
+    "usage_breakdown": null,
+    "system_fingerprint": "fp_c527aa4474",
+    "x_groq": {
+        "id": "req_01k4s6zpsfe29b9rgm6prav427"
+    },
+    "service_tier": "on_demand"
+}
